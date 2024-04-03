@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +31,7 @@ public class UserService {
 	private UserRepo userRepo;
 	@Autowired
 	private JavaMailSender emailSender;
-	
+	BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 	public static String generatePassword() {
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder sb = new StringBuilder();
@@ -63,15 +63,15 @@ public class UserService {
 	        adminUser.setBusinessUnit(newuser.getBusinessUnit());
 	        adminUser.setRole("ADMIN");
 	        // Generate password
-	        String password = generatePassword();
-	        
+	        String pass = generatePassword();
+	        String password = bcrypt.encode(pass);
 //	        // Encode password
 //	        String encodedPassword = passwordEncoder.encode(password);
 //	        
 	        // Set encoded password
 	        adminUser.setPassword(password);
 	        adminUser.setEmpId(newuser.getEmpId());
-	        sendEmail(newuser.getEmail(),newuser.getFirstName() ,newuser.getEmpId(), password);
+	        sendEmail(newuser.getEmail(),newuser.getFirstName() ,newuser.getEmpId(), pass);
 	        // Save the new admin user
 	        userRepo.save(adminUser);
 	    } else {
@@ -106,8 +106,8 @@ public class UserService {
 	                excelData.setEmail(email);
 	                excelData.setRole("TRAINEE");
 	             // Generate password
-	    	        String password = generatePassword();
-	    	        
+	    	        String pass = generatePassword();
+	    	        String password = bcrypt.encode(pass);
 //	    	        // Encode password
 //	    	        String encodedPassword = passwordEncoder.encode(password);
 //	    	        
@@ -116,7 +116,7 @@ public class UserService {
 	                excelDataList.add(excelData);
 
 	                // Send email with employee ID and password
-	                sendEmail(email,row.get(1), empId, password);
+	                sendEmail(email,row.get(1), empId, pass);
 	            }
 	        }
 	        userRepo.saveAll(excelDataList);
