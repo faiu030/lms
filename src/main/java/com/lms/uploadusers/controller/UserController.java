@@ -42,11 +42,16 @@ public class UserController {
 	}
 
 	@PostMapping("/trainee")
-	public ResponseEntity<List<List<String>>> uploadTraineeExcel(@RequestParam("file") MultipartFile file)
+	public ResponseEntity<String> uploadTraineeExcel(@RequestParam("file") MultipartFile file)
 			throws EncryptedDocumentException, IOException {
+		 try {
+
+				userService.saveTrainee(file);
+		        return ResponseEntity.ok("Trainee's file uploaded successfully.");
+		    } catch (RuntimeException e) {
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+		    }
 		
-		userService.saveTrainee(file);
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
 

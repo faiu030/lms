@@ -2,6 +2,7 @@ package com.lms.uploadusers.entity;
 
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,12 +15,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+    @Column(unique = true)
     private int empId;
     private String firstName;
     private String lastName;
     private String email;
-    private String role; // Using Role enum instead of String
+    private String role;
     private String password;
     private String businessUnit;
 	public Long getId() {

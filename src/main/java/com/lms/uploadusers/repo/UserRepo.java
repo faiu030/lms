@@ -8,8 +8,11 @@ import com.lms.uploadusers.entity.User;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-	 User findByEmail(String email);
-	
+	boolean existsByEmpId(int empId);
+
+	boolean existsByEmail(String email);
+
+	User findByEmail(String email);
 
 	
 

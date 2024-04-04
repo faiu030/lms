@@ -19,7 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.lms.uploadusers.entity.User;
 
@@ -63,15 +63,11 @@ public class UserService {
 	        adminUser.setBusinessUnit(newuser.getBusinessUnit());
 	        adminUser.setRole("ADMIN");
 	        // Generate password
-	        String pass = generatePassword();
-	        String password = bcrypt.encode(pass);
-//	        // Encode password
-//	        String encodedPassword = passwordEncoder.encode(password);
-//	        
-	        // Set encoded password
-	        adminUser.setPassword(password);
+	        String password = generatePassword();
+	        String generatedPassword = bcrypt.encode(password); 
+	        adminUser.setPassword(generatedPassword);
 	        adminUser.setEmpId(newuser.getEmpId());
-	        sendEmail(newuser.getEmail(),newuser.getFirstName() ,newuser.getEmpId(), pass);
+	        sendEmail(newuser.getEmail(),newuser.getFirstName() ,newuser.getEmpId(), password);
 	        // Save the new admin user
 	        userRepo.save(adminUser);
 	    } else {
@@ -79,48 +75,70 @@ public class UserService {
 	    }
 	}
 
-	 public void saveTrainee(MultipartFile file) throws EncryptedDocumentException, IOException {
-	        List<List<String>> rows = new ArrayList<>();
 
-	        Workbook workbook = WorkbookFactory.create(file.getInputStream());
-	        Sheet sheet = workbook.getSheetAt(0); // Change index to 0
-	        rows = StreamSupport.stream(sheet.spliterator(), false)
-	                .skip(1)
-	                .map(row -> StreamSupport
-	                        .stream(row.spliterator(), false)
-	                        .map(this::getCellStringValue)
-	                        .collect(Collectors.toList()))
-	                .collect(Collectors.toList());
-	        System.out.println("rows :: " + rows);
-	        // Save data to the database
-	        List<User> excelDataList = new ArrayList<>();
-	        for (List<String> row : rows) {
-	            int empId = (int) Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
-	            String email = row.get(3); // Assuming email is in the 4th column (index 3)
-	            if (userRepo.findByEmail(email) == null) { // Check if user with same empId exists
-	                User excelData = new User();
-	                excelData.setEmpId(empId);
-	                excelData.setFirstName(row.get(1));
-	                excelData.setLastName(row.get(2));
-	                excelData.setBusinessUnit(row.get(4));
-	                excelData.setEmail(email);
-	                excelData.setRole("TRAINEE");
-	             // Generate password
-	    	        String pass = generatePassword();
-	    	        String password = bcrypt.encode(pass);
-//	    	        // Encode password
-//	    	        String encodedPassword = passwordEncoder.encode(password);
-//	    	        
-	    	        // Set encoded password
-	    	        excelData.setPassword(password);
-	                excelDataList.add(excelData);
+	public void saveTrainee(MultipartFile file) throws EncryptedDocumentException, IOException {
+	    List<List<String>> rows = new ArrayList<>();
 
-	                // Send email with employee ID and password
-	                sendEmail(email,row.get(1), empId, pass);
-	            }
+	    Workbook workbook = WorkbookFactory.create(file.getInputStream());
+	    Sheet sheet = workbook.getSheetAt(0); // Change index to 0
+	    rows = StreamSupport.stream(sheet.spliterator(), false)
+	            .skip(1)
+	            .map(row -> StreamSupport
+	                    .stream(row.spliterator(), false)
+	                    .map(this::getCellStringValue)
+	                    .collect(Collectors.toList()))
+	            .collect(Collectors.toList());
+	    System.out.println("rows :: " + rows);
+	    // Save data to the database
+	    List<User> excelDataList = new ArrayList<>();
+	    for (List<String> row : rows) {
+	        int empId = (int) Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
+	        String email = row.get(3); // Assuming email is in the 4th column (index 3)
+	        
+	        // Check if employee ID already exists
+	        if (userRepo.existsByEmpId(empId)) {
+	            // Handle the case where employee ID already exists
+	        	throw new RuntimeException("User with " +empId+" already exists");
+	        	// You can throw an exception, return a message, or perform any other desired action
 	        }
-	        userRepo.saveAll(excelDataList);
+	        
+	        // Check if email already exists
+	        if (userRepo.existsByEmail(email)) {
+	            // Handle the case where email already exists
+	        	throw new RuntimeException("User with "+empId+" already exists");	      
+	        	// You can throw an exception, return a message, or perform any other desired action
+	        }
+	        
+	        // If both employee ID and email are unique, proceed with saving the data
+	        if (!userRepo.existsByEmpId(empId) && !userRepo.existsByEmail(email)) {
+	            User excelData = new User();
+	            excelData.setEmpId(empId);
+	            excelData.setFirstName(row.get(1));
+	            excelData.setLastName(row.get(2));
+	            excelData.setBusinessUnit(row.get(4));
+	            excelData.setEmail(email);
+	            excelData.setRole("TRAINEE");
+	            // Generate password
+	            String password = generatePassword();
+	            String generatedPassword = bcrypt.encode(password);
+
+	            excelData.setPassword(generatedPassword);
+	            excelDataList.add(excelData);
+
+	            // Send email with employee ID and password
+	            sendEmail(email,row.get(1), empId, password);
+	        }
 	    }
+	    try {
+	        userRepo.saveAll(excelDataList);
+	    } catch (DataIntegrityViolationException e) {
+	        // Handle the case where there is a data integrity violation
+	        // This could happen if multiple threads attempt to insert the same record simultaneously
+	        System.out.println("Data integrity violation occurred.");
+	        e.printStackTrace();
+	    }
+	}
+
 
 	 private void sendEmail(String to,String firstName, int empId, String password) {
 	        SimpleMailMessage message = new SimpleMailMessage();
