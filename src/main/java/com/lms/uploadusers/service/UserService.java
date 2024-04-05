@@ -1,6 +1,7 @@
 package com.lms.uploadusers.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -98,7 +99,9 @@ public class UserService {
 	            excelData.setLastName(row.get(2));
 	            excelData.setBusinessUnit(row.get(4));
 	            excelData.setEmail(email);
-	            
+	            excelData.setEnabled(true);
+	            excelData.setCreatedAt(LocalDateTime.now());
+	            excelData.setUpdatedAt(LocalDateTime.now());
 	            // Fetching the trainee role
 	            Roles traineeRole = rolesRepo.findRolesByroleName("Trainee");
 	            if (traineeRole == null) {
