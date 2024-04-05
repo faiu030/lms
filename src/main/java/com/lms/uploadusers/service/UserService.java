@@ -92,7 +92,7 @@ public class UserService {
 	    // Save data to the database
 	    List<User> excelDataList = new ArrayList<>();
 	    for (List<String> row : rows) {
-	        int empId = (int) Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
+	        Long empId = Long.parseLong(row.get(0)); // Assuming empId is in the 1st column (index 0)
 	        String email = row.get(3); // Assuming email is in the 4th column (index 3)
 	        
 	        // Check if employee ID already exists
@@ -140,7 +140,7 @@ public class UserService {
 	}
 
 
-	 private void sendEmail(String to,String firstName, int empId, String password) {
+	 private void sendEmail(String to,String firstName, Long empId, String password) {
 	        SimpleMailMessage message = new SimpleMailMessage();
 	        message.setFrom("THBS");
 	        message.setTo(to);
