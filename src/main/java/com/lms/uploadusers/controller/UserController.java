@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lms.uploadusers.entity.User;
+import com.lms.uploadusers.exception.UserManagementException;
 import com.lms.uploadusers.service.UserService;
 
 @RestController
@@ -29,29 +31,18 @@ public class UserController {
 		return " Hi.. Welcome";
 	}
 
-	@PostMapping("/admin")
-	public ResponseEntity<String> uploadAdminExcel(@RequestBody User newUser)
-	        throws EncryptedDocumentException, IOException {
-	    
+	
+	@PostMapping("/trainee")
+	public ResponseEntity<String> uploadTraineeExcel(@RequestParam("file") MultipartFile file) {
 	    try {
-	        userService.saveAdmin(newUser);
-	        return ResponseEntity.ok("Admin user uploaded successfully.");
+	        userService.saveTrainee(file);
+	        return ResponseEntity.ok("Trainee's file uploaded successfully.");
+	    } catch (IOException e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: IOException occurred while processing the file.");
 	    } catch (RuntimeException e) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
 	    }
 	}
 
-	@PostMapping("/trainee")
-	public ResponseEntity<String> uploadTraineeExcel(@RequestParam("file") MultipartFile file)
-			throws EncryptedDocumentException, IOException {
-		 try {
-
-				userService.saveTrainee(file);
-		        return ResponseEntity.ok("Trainee's file uploaded successfully.");
-		    } catch (RuntimeException e) {
-		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-		    }
-		
-	}
 }
 

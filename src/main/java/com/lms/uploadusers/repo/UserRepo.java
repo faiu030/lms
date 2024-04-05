@@ -8,7 +8,7 @@ import com.lms.uploadusers.entity.User;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-	boolean existsByEmpId(int empId);
+	boolean existsByEmpId(Long empId);
 
 	boolean existsByEmail(String email);
 
