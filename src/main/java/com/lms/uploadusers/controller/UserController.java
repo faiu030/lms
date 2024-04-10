@@ -1,6 +1,7 @@
 package com.lms.uploadusers.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import com.lms.uploadusers.entity.User;
 import com.lms.uploadusers.service.UserService;
 
 @RestController
@@ -39,6 +40,16 @@ public class UserController {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
 	    }
 	}
+	@GetMapping("/getAll")
+	public List<User> getAll(){
+		return userService.findAll();
+	}
+	
+	@GetMapping("/getTrainee")
+    public List<User> getUsersByRoleId() {
+		int roleId = 2;
+        return userService.getUsersByRoleId(roleId);
+    }
 
 }
 
