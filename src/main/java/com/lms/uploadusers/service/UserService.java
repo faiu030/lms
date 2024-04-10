@@ -59,9 +59,9 @@ public class UserService {
 
 
 
-	// Other imports...
+	
 
-	public void saveTrainee(MultipartFile file) throws EncryptedDocumentException, IOException {
+	public List<User> saveTrainee(MultipartFile file) throws EncryptedDocumentException, IOException {
 	    try {
 	        List<List<String>> rows = new ArrayList<>();
 
@@ -78,60 +78,63 @@ public class UserService {
 	        // Save data to the database
 	        List<User> excelDataList = new ArrayList<>();
 	        for (List<String> row : rows) {
-	        	double empIdDouble = Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
-	            long empId = (long) empIdDouble;	            
-	            String email = row.get(3); // Assuming email is in the 4th column (index 3)
+	            try {
+	                double empIdDouble = Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
+	                long empId = (long) empIdDouble;
+	                String email = row.get(3); // Assuming email is in the 4th column (index 3)
 
-	            // Check if employee ID already exists
-	            if (userRepo.existsByEmpId(empId)) {
-	                throw new UserManagementException("User with empId " + empId + " already exists");
+	                // Check if employee ID already exists
+	                if (userRepo.existsByEmpId(empId)) {
+	                    throw new UserManagementException("User with empId " + empId + " already exists");
+	                }
+
+	                // Check if email already exists
+	                if (userRepo.existsByEmail(email)) {
+	                    throw new UserManagementException("User with email " + email + " already exists");
+	                }
+
+	                // If both employee ID and email are unique, proceed with saving the data
+	                User excelData = new User();
+	                excelData.setEmpId(empId);
+	                excelData.setFirstName(row.get(1));
+	                excelData.setLastName(row.get(2));
+	                excelData.setBusinessUnit(row.get(4));
+	                excelData.setEmail(email);
+	                excelData.setEnabled(true);
+	                excelData.setCreatedAt(LocalDateTime.now());
+	                excelData.setUpdatedAt(LocalDateTime.now());
+	                // Fetching the trainee role
+	                Roles traineeRole = rolesRepo.findRolesByroleName("Trainee");
+	                if (traineeRole == null) {
+	                    throw new UserManagementException("Trainee role not found"); // Handle if role not found
+	                }
+	                excelData.setRole(traineeRole);
+
+	                // Generate password
+	                String password = generatePassword();
+	                String generatedPassword = bcrypt.encode(password);
+
+	                excelData.setPassword(generatedPassword);
+	                excelDataList.add(excelData);
+
+	                // Send email with employee ID and password
+	                sendEmail(email, row.get(1), empId, password);
+	            } catch (Exception e) {
+	                // Log or handle the exception for the specific row
+	            	throw new RuntimeException("Error processing row: " + e.getMessage());
 	            }
-
-	            // Check if email already exists
-	            if (userRepo.existsByEmail(email)) {
-	                throw new UserManagementException("User with email " + email + " already exists");
-	            }
-
-	            // If both employee ID and email are unique, proceed with saving the data
-	            User excelData = new User();
-	            excelData.setEmpId(empId);
-	            excelData.setFirstName(row.get(1));
-	            excelData.setLastName(row.get(2));
-	            excelData.setBusinessUnit(row.get(4));
-	            excelData.setEmail(email);
-	            excelData.setEnabled(true);
-	            excelData.setCreatedAt(LocalDateTime.now());
-	            excelData.setUpdatedAt(LocalDateTime.now());
-	            // Fetching the trainee role
-	            Roles traineeRole = rolesRepo.findRolesByroleName("Trainee");
-	            if (traineeRole == null) {
-	                throw new UserManagementException("Trainee role not found"); // Handle if role not found
-	            }
-	            excelData.setRole(traineeRole);
-
-	            // Generate password
-	            String password = generatePassword();
-	            String generatedPassword = bcrypt.encode(password);
-
-	            excelData.setPassword(generatedPassword);
-	            excelDataList.add(excelData);
-
-	            // Send email with employee ID and password
-	            sendEmail(email, row.get(1), empId, password);
 	        }
 
-	        userRepo.saveAll(excelDataList);
+	        // Save all successfully processed rows to the database
+	        return userRepo.saveAll(excelDataList);
 	    } catch (EncryptedDocumentException | IOException e) {
-            throw new RuntimeException("Error processing Excel file: " + e.getMessage());
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Data integrity violation occurred: " + e.getMessage());
-        } catch (UserManagementException e) {
-            throw new RuntimeException("User management exception occurred: " + e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error occurred: " + e.getMessage());
-        }
+	        throw new RuntimeException("Error processing Excel file: " + e.getMessage());
+	    } catch (DataIntegrityViolationException e) {
+	        throw new RuntimeException("Data integrity violation occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        throw new RuntimeException("Unexpected error occurred: " + e.getMessage());
+	    }
 	}
-
 
 	 private void sendEmail(String to,String firstName, Long empId, String password) {
 	        SimpleMailMessage message = new SimpleMailMessage();
@@ -156,5 +159,12 @@ public class UserService {
 
 		return null;
 	}
+	
+	public List<User> findAll(){
+		return userRepo.findAll();
+	}
+	public List<User> getUsersByRoleId(int roleId) {
+        return userRepo.findByRole_RoleId(roleId);
+    }
 	
 }
