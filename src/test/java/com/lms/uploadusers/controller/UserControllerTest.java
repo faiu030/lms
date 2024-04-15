@@ -12,9 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lms.uploadusers.entity.Roles;
+
 import com.lms.uploadusers.entity.User;
-import com.lms.uploadusers.repo.RolesRepo;
+import com.lms.uploadusers.enumerate.Roles;
 import com.lms.uploadusers.repo.UserRepo;
 import com.lms.uploadusers.service.UserService;
 
@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +38,6 @@ public class UserControllerTest {
 	private MockMvc mockMvc;
 	
 	@MockBean
-	private RolesRepo rolesRepo;
-	
-	@MockBean
 	private UserRepo userRepo;
 	
 	@MockBean
@@ -51,19 +47,15 @@ public class UserControllerTest {
 	public void testupload()throws Exception{
 		User mockUser=new User();
 		
-		mockUser.setId((long) 1);
+		mockUser.setEmpId((long) 1);
 		mockUser.setEmpId((long) 12345);
 		mockUser.setFirstName("Gowsic");
 		mockUser.setLastName("K");
 		mockUser.setEmail("gowsickandasamy410@gmail.com");
-		Roles traineeRole = rolesRepo.findRolesByroleName("Trainee");
 		
-		mockUser.setRole(traineeRole);
+		mockUser.setRole(Roles.TRAINEE);
 		mockUser.setPassword("GOW1234");
 		mockUser.setBusinessUnit("nbu");
-		mockUser.setEnabled(true);
-		mockUser.setCreatedAt(LocalDateTime.now());
-		mockUser.setUpdatedAt(LocalDateTime.now());
 		
 		String inputInJson = this.mapToJson(mockUser);
 		
