@@ -34,34 +34,8 @@ public class UserService {
 	
 	BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 	
-	public void saveTrainer(User newuser) {
-	    User existingUser = userRepo.findByEmpId(newuser.getEmpId());
-	    if (existingUser == null) {
-	        // Create a new user
-	        User trainerUser = new User();
-	        trainerUser.setEmpId(newuser.getEmpId());
-	        trainerUser.setFirstName(newuser.getFirstName());
-	        trainerUser.setLastName(newuser.getLastName());
-	        trainerUser.setEmail(newuser.getEmail());
-	        trainerUser.setBusinessUnit(newuser.getBusinessUnit());
-	        trainerUser.setRole(Roles.TRAINER);
-	        // Generate password
-	        String pass = "root";
-	        String password = bcrypt.encode(pass);
-//	        // Encode password
-//	        String encodedPassword = passwordEncoder.encode(password);
-//	        
-	        // Set encoded password
-	        trainerUser.setPassword(password);
-	        
-	        // Save the new admin user
-	        userRepo.save(trainerUser);
-	    } else {
-	        throw new UserManagementException("User with employee ID "+newuser.getEmpId()+" is already exists");
-	    }
-	}
 
-	public List<User> saveTrainee(MultipartFile file) throws EncryptedDocumentException, IOException {
+	public List<User> saveUser(MultipartFile file) throws EncryptedDocumentException, IOException {
 	    
 	        List<List<String>> rows = new ArrayList<>();
 
@@ -103,7 +77,7 @@ public class UserService {
 	            excelData.setLastName(row.get(2));
 	            excelData.setBusinessUnit(row.get(4));
 	            excelData.setEmail(email);
-	            excelData.setRole(Roles.TRAINEE);
+	            excelData.setRole(Roles.USER);
 
 	            // Generate password
 	            String password = "root";
@@ -148,5 +122,11 @@ public class UserService {
 	public List<User> getUsersByRole(Roles role) {
 		return userRepo.findByRole(role);
 	}
+	public List<Long> findUserEmpIds() {
+        List<User> trainees = userRepo.findByRole(Roles.USER);
+        return trainees.stream()
+                .map(User::getEmpId)
+                .collect(Collectors.toList());
+    }
 
 }

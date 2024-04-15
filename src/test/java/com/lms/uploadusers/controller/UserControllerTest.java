@@ -53,7 +53,7 @@ public class UserControllerTest {
 		mockUser.setLastName("K");
 		mockUser.setEmail("gowsickandasamy410@gmail.com");
 		
-		mockUser.setRole(Roles.TRAINEE);
+		mockUser.setRole(Roles.USER);
 		mockUser.setPassword("GOW1234");
 		mockUser.setBusinessUnit("nbu");
 		
@@ -62,7 +62,7 @@ public class UserControllerTest {
 		String URL="/upload/trainee";
 		
 		// Assuming your UserService.saveTrainee() method returns a List<User>
-		Mockito.when(userService.saveTrainee((MultipartFile) Mockito.any(User.class))).thenReturn(Collections.singletonList(mockUser));
+		Mockito.when(userService.saveUser((MultipartFile) Mockito.any(User.class))).thenReturn(Collections.singletonList(mockUser));
 		
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.post(URL)

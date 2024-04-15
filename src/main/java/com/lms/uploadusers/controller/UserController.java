@@ -33,10 +33,10 @@ public class UserController {
 
 
 	
-	@PostMapping("/trainee")
-	public ResponseEntity<Object> uploadTraineeExcel(@RequestParam("file") MultipartFile file) {
+	@PostMapping("/upload")
+	public ResponseEntity<Object> uploadUserExcel(@RequestParam("file") MultipartFile file) {
 		 try {
-		        userService.saveTrainee(file);
+		        userService.saveUser(file);
 		        return ResponseEntity.ok("Trainee's file uploaded successfully.");
 		    } catch (IOException e) {
 		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: IOException occurred while processing the file.");
@@ -63,8 +63,13 @@ public class UserController {
 	
 	 @GetMapping("/role/trainee")
 	    public List<User> getUsersByRoleId() {
-		 	Roles role = Roles.TRAINEE;
+		 	Roles role = Roles.USER;
 	        return userService.getUsersByRole(role);
 	    }
+	 
+	 @GetMapping("/getId")
+	 public List<Long> getAllUserEmpId(){
+		 return userService.findUserEmpIds();
+	 }
 }
 
