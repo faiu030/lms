@@ -71,5 +71,11 @@ public class UserController {
 	 public List<Long> getAllUserEmpId(){
 		 return userService.findUserEmpIds();
 	 }
+	 @GetMapping("/byBusinessUnit/{businessUnit}")
+	    public ResponseEntity<List<Long>> getUsersByBusinessUnit(@PathVariable("businessUnit") String businessUnit) {
+	        List<Long> users = userService.findEmployeeIdsByBusinessUnit(businessUnit);
+	        return ResponseEntity.ok(users);
+	    }
+
 }
 

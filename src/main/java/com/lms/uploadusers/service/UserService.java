@@ -128,5 +128,14 @@ public class UserService {
                 .map(User::getEmpId)
                 .collect(Collectors.toList());
     }
+	
+	public List<Long> findEmployeeIdsByBusinessUnit(String businessUnit) {
+        List<User> users = userRepo.findByBusinessUnit(businessUnit);
+        return users.stream()
+                .map(User::getEmpId)
+                .collect(Collectors.toList());
+    }
+	
+
 
 }
