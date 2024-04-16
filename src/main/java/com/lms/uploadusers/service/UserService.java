@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lms.uploadusers.Dto.UserDTO;
 import com.lms.uploadusers.entity.User;
 import com.lms.uploadusers.enumerate.Roles;
 import com.lms.uploadusers.exception.DataIntegrityViolationException;
@@ -34,6 +35,16 @@ public class UserService {
 	
 	BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 	
+	private UserDTO mapToUserDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setEmployeeId(user.getEmployeeId());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setBusinessUnit(user.getBusinessUnit());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setRole(user.getRole());
+        return userDTO;
+    }
 
 	public List<User> saveUser(MultipartFile file) throws EncryptedDocumentException, IOException {
 	    
@@ -53,13 +64,13 @@ public class UserService {
 	        // Save data to the database
 	        List<User> excelDataList = new ArrayList<>();
 	        for (List<String> row : rows) {
-	            double empIdDouble = Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
-	            long empId = (long) empIdDouble;
+	            double employeeIdDouble = Double.parseDouble(row.get(0)); // Assuming empId is in the 1st column (index 0)
+	            long employeeId = (long) employeeIdDouble;
 	            String email = row.get(3); // Assuming email is in the 4th column (index 3)
 
 	            // Check if employee ID already exists
-	            if (userRepo.existsByEmpId(empId)) {
-	                throw new UserManagementException("User with empId " + empId + " already exists");
+	            if (userRepo.existsByEmployeeId(employeeId)) {
+	                throw new UserManagementException("User with employeeID " + employeeId + " already exists");
 	            }
 
 	            // Check if email already exists
@@ -69,10 +80,10 @@ public class UserService {
 
 	            // If both employee ID and email are unique, proceed with saving the data
 	            User excelData = new User();
-	    	    User existingUser = userRepo.findByEmpId(excelData.getEmpId());
+	            User existingUser = userRepo.findByEmployeeId(employeeId);
 	    	    if (existingUser == null) {
   
-	            excelData.setEmpId(empId);
+	            excelData.setEmployeeId(employeeId);
 	            excelData.setFirstName(row.get(1));
 	            excelData.setLastName(row.get(2));
 	            excelData.setBusinessUnit(row.get(4));
@@ -87,7 +98,7 @@ public class UserService {
 	            excelDataList.add(excelData);
 	    	    }
 	    	    else {
-	    	        throw new UserManagementException("User with employee ID "+excelData.getEmpId()+" is already exists");
+	    	        throw new UserManagementException("User with employee ID "+excelData.getEmployeeId()+" is already exists");
 	    	    }
 	        }
 
@@ -115,27 +126,34 @@ public class UserService {
 		return userRepo.findAll();
 	}
 	
-	public User getUserByEmpId(Long empId) {
-	    return userRepo.findByEmpId(empId);
+	public User getUserByEmployeeId(Long employeeId) {
+	    return userRepo.findByEmployeeId(employeeId);
 	}
 
 	public List<User> getUsersByRole(Roles role) {
 		return userRepo.findByRole(role);
 	}
-	public List<Long> findUserEmpIds() {
+	public List<Long> findUserEmployeeIds() {
         List<User> trainees = userRepo.findByRole(Roles.USER);
         return trainees.stream()
-                .map(User::getEmpId)
+                .map(User::getEmployeeId)
                 .collect(Collectors.toList());
     }
 	
 	public List<Long> findEmployeeIdsByBusinessUnit(String businessUnit) {
         List<User> users = userRepo.findByBusinessUnit(businessUnit);
         return users.stream()
-                .map(User::getEmpId)
+                .map(User::getEmployeeId)
                 .collect(Collectors.toList());
     }
 	
+	 public List<UserDTO> findAllUsers() {
+	        List<User> users = userRepo.findAll();
+	        return users.stream()
+	                .map(this::mapToUserDTO)
+	                .collect(Collectors.toList());
+	    }
 
+	    
 
 }

@@ -47,8 +47,8 @@ public class UserControllerTest {
 	public void testupload()throws Exception{
 		User mockUser=new User();
 		
-		mockUser.setEmpId((long) 1);
-		mockUser.setEmpId((long) 12345);
+		mockUser.setEmployeeId((long) 1);
+		mockUser.setEmployeeId((long) 12345);
 		mockUser.setFirstName("Gowsic");
 		mockUser.setLastName("K");
 		mockUser.setEmail("gowsickandasamy410@gmail.com");

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,12 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lms.uploadusers.Dto.UserDTO;
 import com.lms.uploadusers.entity.User;
 import com.lms.uploadusers.enumerate.Roles;
-import com.lms.uploadusers.exception.DataIntegrityViolationException;
-import com.lms.uploadusers.exception.ErrorResponse;
-import com.lms.uploadusers.exception.ExcelProcessingException;
-import com.lms.uploadusers.exception.HttpMediaTypeNotAcceptableException;
 import com.lms.uploadusers.exception.UserManagementException;
 import com.lms.uploadusers.service.UserService;
 
@@ -51,9 +49,9 @@ public class UserController {
 	}
 	
 	
-	 @GetMapping("/{empId}")
-	    public ResponseEntity<User> getUserByEmpId(@PathVariable Long empId) {
-	        User user = userService.getUserByEmpId(empId);
+	 @GetMapping("/{employeeId}")
+	    public ResponseEntity<User> getUserByEmployeeId(@PathVariable Long employeeId) {
+	        User user = userService.getUserByEmployeeId(employeeId);
 	        if (user != null) {
 	            return ResponseEntity.ok(user);
 	        } else {
@@ -68,14 +66,20 @@ public class UserController {
 	    }
 	 
 	 @GetMapping("/getId")
-	 public List<Long> getAllUserEmpId(){
-		 return userService.findUserEmpIds();
+	 public List<Long> getAllUserEmployeeId(){
+		 return userService.findUserEmployeeIds();
 	 }
 	 @GetMapping("/byBusinessUnit/{businessUnit}")
-	    public ResponseEntity<List<Long>> getUsersByBusinessUnit(@PathVariable("businessUnit") String businessUnit) {
+	 public ResponseEntity<List<Long>> getUsersByBusinessUnit(@PathVariable("businessUnit") String businessUnit) {
 	        List<Long> users = userService.findEmployeeIdsByBusinessUnit(businessUnit);
 	        return ResponseEntity.ok(users);
 	    }
+	
+	    @GetMapping("/all")
+	    public List<UserDTO>  findAllUsers() {
+	        return userService.findAllUsers();
+	    }
+
 
 }
 
