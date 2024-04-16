@@ -29,9 +29,12 @@ import com.lms.uploadusers.repo.UserRepo;
 
 @Service
 public class UserService {
-	@Autowired
-	private UserRepo userRepo;
-	
+	private final UserRepo userRepo;
+
+    @Autowired
+    public UserService(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 	
 	BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 	
@@ -108,7 +111,7 @@ public class UserService {
 
 	
 
-	private String getCellStringValue(Cell cell) {
+	public String getCellStringValue(Cell cell) {
 		CellType cellType = cell.getCellType();
 
 		if (cellType == CellType.STRING) {

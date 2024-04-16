@@ -25,10 +25,12 @@ import com.lms.uploadusers.service.UserService;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
-
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 	
 	@PostMapping("/upload")
