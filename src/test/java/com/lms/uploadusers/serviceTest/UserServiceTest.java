@@ -47,26 +47,6 @@ public class UserServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-//    @Test
-//    public void testSaveUser_Success() throws IOException {
-//        // Mock data
-//    	MockMultipartFile mockFile = new MockMultipartFile("file", "test.xlsx", "text/plain", "mock data".getBytes());
-//
-//        // Stubbing the behavior of userRepo.saveAll() to return saved users
-//        List<User> savedUsers = new ArrayList<>();
-//        // Add sample saved users to the list
-//
-//        when(userRepo.saveAll(anyList())).thenReturn(savedUsers);
-//
-//        // Call the method being tested
-//        List<User> result = userService.saveUser(mockFile);
-//
-//        // Verify the result
-//        assertEquals(savedUsers, result);
-//    }
-
-    // Write similar test methods for other scenarios of saveUser method
-
     @Test
     public void testFindAll() {
         // Stubbing the behavior of userRepo.findAll() to return a list of users
@@ -86,8 +66,8 @@ public class UserServiceTest {
     public void testFindAll_NotEmptyList() {
         // Mock data - non-empty list of users
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userRepo.findAll() to return the mock data
@@ -152,8 +132,8 @@ public class UserServiceTest {
         // Mock data - non-empty list of users
         Roles role = Roles.USER;
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userRepo.findByRole() to return the mock data
@@ -188,8 +168,8 @@ public class UserServiceTest {
     public void testFindUserEmployeeIds_NotEmptyList() {
         // Mock data - non-empty list of users
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userRepo.findByRole() to return the mock data
@@ -221,8 +201,8 @@ public class UserServiceTest {
         // Mock data - non-empty list of users
         String businessUnit = "Sales";
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Sales")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Sales",true)
         );
 
         // Stubbing the behavior of userRepo.findByBusinessUnit() to return the mock data
@@ -256,8 +236,8 @@ public class UserServiceTest {
     public void testFindAllUsers_NotEmptyList() {
         // Mock data - non-empty list of users
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userRepo.findAll() to return the mock data
