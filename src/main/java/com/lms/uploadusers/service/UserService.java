@@ -92,6 +92,7 @@ public class UserService {
 	            excelData.setBusinessUnit(row.get(4));
 	            excelData.setEmail(email);
 	            excelData.setRole(Roles.USER);
+	            excelData.setIsemailverified(true);
 
 	            // Generate password
 	            String password = "root";
