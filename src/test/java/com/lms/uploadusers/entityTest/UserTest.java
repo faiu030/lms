@@ -17,8 +17,9 @@ public class UserTest {
         Roles role = Roles.ADMIN;
         String password = "password";
         String businessUnit = "Sales";
-
-        User user = new User(userId, employeeId, firstName, lastName, email, role, password, businessUnit);
+        boolean isemailverified = true;
+        
+        User user = new User(userId, employeeId, firstName, lastName, email, role, password, businessUnit,isemailverified);
 
         assertEquals(userId, user.getUserId());
         assertEquals(employeeId, user.getEmployeeId());
@@ -28,6 +29,7 @@ public class UserTest {
         assertEquals(role, user.getRole());
         assertEquals(password, user.getPassword());
         assertEquals(businessUnit, user.getBusinessUnit());
+        assertEquals(isemailverified, user.isIsemailverified());
     }
 
     @Test
@@ -41,7 +43,8 @@ public class UserTest {
         Roles role = Roles.ADMIN;
         String password = "password";
         String businessUnit = "Sales";
-
+        boolean isemailverified = true;
+        
         user.setUserId(userId);
         user.setEmployeeId(employeeId);
         user.setFirstName(firstName);
@@ -50,7 +53,7 @@ public class UserTest {
         user.setRole(role);
         user.setPassword(password);
         user.setBusinessUnit(businessUnit);
-
+        user.setIsemailverified(true);
         assertEquals(userId, user.getUserId());
         assertEquals(employeeId, user.getEmployeeId());
         assertEquals(firstName, user.getFirstName());
@@ -59,5 +62,6 @@ public class UserTest {
         assertEquals(role, user.getRole());
         assertEquals(password, user.getPassword());
         assertEquals(businessUnit, user.getBusinessUnit());
+        assertEquals(isemailverified, user.isIsemailverified());
     }
 }
