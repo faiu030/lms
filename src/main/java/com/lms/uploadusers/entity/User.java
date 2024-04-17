@@ -22,10 +22,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "Users")
 
-@Getter
-@Setter
+
 
 public class User {
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -38,6 +38,9 @@ public class User {
     private Roles role;
     private String password;
     private String businessUnit;
+    private boolean isemailverified;
+	
+    
 	public Long getUserId() {
 		return userId;
 	}
@@ -86,8 +89,15 @@ public class User {
 	public void setBusinessUnit(String businessUnit) {
 		this.businessUnit = businessUnit;
 	}
+	public boolean isIsemailverified() {
+		return isemailverified;
+	}
+	public void setIsemailverified(boolean isemailverified) {
+		this.isemailverified = isemailverified;
+	}
+	
 	public User(Long userId, Long employeeId, String firstName, String lastName, String email, Roles role,
-			String password, String businessUnit) {
+			String password, String businessUnit,boolean isemailverified) {
 		super();
 		this.userId = userId;
 		this.employeeId = employeeId;
@@ -97,6 +107,7 @@ public class User {
 		this.role = role;
 		this.password = password;
 		this.businessUnit = businessUnit;
+		this.isemailverified = isemailverified;
 	}
 	public User() {
 		
