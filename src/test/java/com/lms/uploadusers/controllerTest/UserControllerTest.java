@@ -44,8 +44,8 @@ public class UserControllerTest {
     public void testGetAll_Success() {
         // Mock data
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.ADMIN, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userService.findAll() to return the mock data
@@ -148,8 +148,8 @@ public class UserControllerTest {
         // Mock data
         Roles role = Roles.USER;
         List<User> userList = Arrays.asList(
-            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.USER, "password", "Sales"),
-            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing")
+            new User(1L, 1001L, "John", "Doe", "john@example.com", Roles.USER, "password", "Sales",true),
+            new User(2L, 1002L, "Jane", "Doe", "jane@example.com", Roles.USER, "password", "Marketing",true)
         );
 
         // Stubbing the behavior of userService.getUsersByRole() to return the mock data
